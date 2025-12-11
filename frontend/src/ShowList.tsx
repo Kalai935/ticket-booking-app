@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { Calendar, Clock, ArrowRight, Bus, Search } from 'lucide-react';
 import { format } from 'date-fns';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const API_URL = 'https://ticket-backend-j8o6.onrender.com';
 
 interface Show {
   id: number;
