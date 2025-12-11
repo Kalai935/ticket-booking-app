@@ -8,7 +8,8 @@ A production-grade Ticket Booking System simulating platforms like **RedBus** or
 
 - **Frontend (Live App):** [https://ticket-booking-app-olive.vercel.app/](https://ticket-booking-app-olive.vercel.app/)
 - **Backend (API):** [https://ticket-backend-j8o6.onrender.com/api/shows](https://ticket-backend-j8o6.onrender.com/api/shows)
-- **Video Walkthrough:** [PASTE YOUR YOUTUBE/DRIVE LINK HERE]
+- **Product Explanation video:** [https://drive.google.com/file/d/1dOVMOOnBSQxRQOtlhBtzdl1W-18hNfHX/view?usp=sharing]
+- **Deployment Explanation:** [https://drive.google.com/file/d/1YLWlvecbvBK4IDdUvsdKl3g0Gnh6n-j3/view?usp=sharing]
 
 > **Note:** The backend is hosted on Render's Free Tier. It may take **50-60 seconds to "wake up"** on the first request. Please be patient if the initial load takes a moment!
 
