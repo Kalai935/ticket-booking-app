@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import { Calendar, Clock, MapPin, ArrowRight, Bus, Search } from 'lucide-react';
+import { Calendar, Clock, ArrowRight, Bus, Search } from 'lucide-react';
 import { format } from 'date-fns';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
