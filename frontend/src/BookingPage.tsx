@@ -118,12 +118,37 @@ const BookingPage = () => {
       {/* SUCCESS POPUP */}
       {status === 'success' && (
         <div className="modal-overlay">
-          <div className="modal-content">
-            <div className="modal-icon-wrapper" style={{ background: '#dcfce7', color: '#16a34a' }}>
-              <Check size={40} strokeWidth={3} />
+          <div className="modal-content" style={{ padding: '0', overflow: 'hidden', border: 'none' }}>
+            <div style={{ background: 'var(--success)', color: 'white', padding: '20px' }}>
+              <Check size={40} style={{ margin: '0 auto 10px' }} />
+              <h2 style={{ margin: 0 }}>Booking Confirmed!</h2>
             </div>
-            <h2 style={{ fontSize: '1.5rem', marginBottom: '10px' }}>Booking Confirmed!</h2>
-            <p style={{ color: 'var(--text-muted)' }}>Your seats have been reserved.</p>
+            <div style={{ padding: '30px', textAlign: 'left' }}>
+              <div style={{ borderBottom: '2px dashed #e2e8f0', paddingBottom: '15px', marginBottom: '15px' }}>
+                <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px' }}>Passenger ID</p>
+                <p style={{ fontWeight: 'bold', fontSize: '1.1rem' }}>#USER-{userId}</p>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                <div>
+                  <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>SEATS</p>
+                  <p style={{ fontWeight: 'bold' }}>{selectedSeats.join(', ')}</p>
+                </div>
+                <div style={{ textAlign: 'right' }}>
+                  <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>TOTAL</p>
+                  <p style={{ fontWeight: 'bold', color: 'var(--success)' }}>${selectedSeats.length * 25}</p>
+                </div>
+              </div>
+              <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginTop: '20px', textAlign: 'center' }}>
+                Present this digital ticket at the boarding station.
+              </p>
+            </div>
+            <button 
+              onClick={() => window.location.href = '/'} 
+              className="btn btn-primary" 
+              style={{ width: '100%', borderRadius: 0 }}
+            >
+              Back to Home
+            </button>
           </div>
         </div>
       )}

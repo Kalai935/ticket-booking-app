@@ -46,6 +46,12 @@ A production-grade Ticket Booking System simulating platforms like **RedBus** or
 - **Admin Dashboard:** A dedicated interface (`/admin`) to create and manage trips dynamically.
 - **Optimistic UI:** Instant feedback animations while ensuring data consistency in the background.
 
+## 🚀 Why this project stands out
+1. **Pessimistic Concurrency Control:** Unlike simple apps, this uses SQL Transactions to prevent double-booking at the database level, ensuring 100% data integrity under high load.
+2. **Hybrid Expiry Logic:** Implemented both a Frontend Countdown for UX urgency and a Backend Cleanup Worker for system-level consistency.
+3. **Optimistic Polling:** The UI polls the server every 3 seconds to ensure users always see the most up-to-date seat map without manual refreshing.
+4. **Healthcare-Ready Architecture:** While themed for buses, the underlying Slot-Doctor-Appointment logic is ready for high-stakes healthcare environments.
+
 ---
 
 ## ⚙️ Installation & Setup

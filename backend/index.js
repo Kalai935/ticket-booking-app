@@ -118,6 +118,41 @@ app.post('/api/bookings', async (req, res) => {
     }
 });
 
+app.post('/api/shows', async (req, res) => {
+    const { name, start_time, total_seats } = req.body;
+    
+    // VALIDATION: Prevent past dates
+    if (new Date(start_time) < new Date()) {
+        return res.status(400).json({ error: "Cannot create a trip in the past!" });
+    }
+
+    try {
+        const result = await pool.query(
+            'INSERT INTO shows (name, start_time, total_seats) VALUES ($1, $2, $3) RETURNING *',
+            [name, start_time, total_seats]
+        );
+        res.json(result.rows[0]);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// 2. BACKEND EXPIRY (The Optional Bonus from Page 2)
+// This runs every 1 minute and fails bookings older than 10 minutes (for demo)
+setInterval(async () => {
+    try {
+        await pool.query(`
+            UPDATE bookings 
+            SET status = 'FAILED' 
+            WHERE status = 'PENDING' 
+            AND created_at < NOW() - INTERVAL '2 minutes'
+        `);
+        console.log("Cleanup: Expired pending bookings cleared.");
+    } catch (err) {
+        console.error("Cleanup Error:", err);
+    }
+}, 60000); // 60,000ms = 1 minute
+
 const PORT = 5000;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
