@@ -9,10 +9,20 @@ app.use(express.json());
 
 // --- ROUTES ---
 
-// 1. Create a Show (For Admin)
+// 1. Create a Show (For Admin) - WITH VALIDATION
 // This creates a new bus trip or movie show
 app.post('/api/shows', async (req, res) => {
     const { name, start_time, total_seats } = req.body;
+
+    // VALIDATION: Prevent past dates
+    // We compare the trip date against the current server time
+    const tripDate = new Date(start_time);
+    const now = new Date();
+
+    if (tripDate < now) {
+        return res.status(400).json({ error: "Cannot create a trip in the past!" });
+    }
+
     try {
         const result = await pool.query(
             'INSERT INTO shows (name, start_time, total_seats) VALUES ($1, $2, $3) RETURNING *',
@@ -118,27 +128,9 @@ app.post('/api/bookings', async (req, res) => {
     }
 });
 
-app.post('/api/shows', async (req, res) => {
-    const { name, start_time, total_seats } = req.body;
-    
-    // VALIDATION: Prevent past dates
-    if (new Date(start_time) < new Date()) {
-        return res.status(400).json({ error: "Cannot create a trip in the past!" });
-    }
-
-    try {
-        const result = await pool.query(
-            'INSERT INTO shows (name, start_time, total_seats) VALUES ($1, $2, $3) RETURNING *',
-            [name, start_time, total_seats]
-        );
-        res.json(result.rows[0]);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
-
-// 2. BACKEND EXPIRY (The Optional Bonus from Page 2)
-// This runs every 1 minute and fails bookings older than 10 minutes (for demo)
+// --- AUTOMATIC CLEANUP (Bonus Feature) ---
+// This runs every 1 minute and marks 'PENDING' bookings as 'FAILED' 
+// if they are older than 2 minutes.
 setInterval(async () => {
     try {
         await pool.query(`
@@ -147,7 +139,7 @@ setInterval(async () => {
             WHERE status = 'PENDING' 
             AND created_at < NOW() - INTERVAL '2 minutes'
         `);
-        console.log("Cleanup: Expired pending bookings cleared.");
+        console.log("Cleanup: Expired pending bookings checked.");
     } catch (err) {
         console.error("Cleanup Error:", err);
     }

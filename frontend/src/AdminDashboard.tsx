@@ -34,6 +34,13 @@ const AdminDashboard = () => {
     }
   };
 
+// Helper to get current local time for the "min" attribute
+const getCurrentDateTime = () => {
+  const now = new Date();
+  now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+  return now.toISOString().slice(0, 16);
+};
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus('saving');
@@ -86,6 +93,7 @@ const AdminDashboard = () => {
               <input 
                 type="datetime-local" 
                 required
+                min={getCurrentDateTime()}
                 value={formData.start_time}
                 onChange={e => setFormData({...formData, start_time: e.target.value})}
                 style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #cbd5e1', fontSize: '1rem' }}
