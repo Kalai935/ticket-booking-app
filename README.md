@@ -41,6 +41,11 @@ A production-grade Ticket Booking System simulating platforms like **RedBus** or
 | **Database** | PostgreSQL | Neon.tech (Cloud), `pg` library for raw SQL queries |
 | **Deployment** | Vercel & Render | CI/CD via GitHub |
 
+### 🌟 Innovation & Bonus Features
+- **Live Seat Updates:** The application uses **polling** to automatically refresh seat availability every 3 seconds. If another user books a seat, your screen updates instantly without refreshing.
+- **Admin Dashboard:** A dedicated interface (`/admin`) to create and manage trips dynamically.
+- **Optimistic UI:** Instant feedback animations while ensuring data consistency in the background.
+
 ---
 
 ## ⚙️ Installation & Setup

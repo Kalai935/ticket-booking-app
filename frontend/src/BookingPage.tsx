@@ -18,22 +18,34 @@ const BookingPage = () => {
   const [userId] = useState(Math.floor(Math.random() * 10000));
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchShowDetails = async () => {
       try {
         const showRes = await axios.get(`${API_URL}/api/shows`);
         const show = showRes.data.find((s: any) => s.id === Number(id));
         if (show) setTotalSeats(show.total_seats);
-
-        const seatRes = await axios.get(`${API_URL}/api/shows/${id}/seats`);
-        setBookedSeats(seatRes.data);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
+      } catch (err) { console.error(err); }
     };
-    fetchData();
-  }, [id]);
+
+    const fetchSeats = async () => {
+      try {
+        // Only fetch seats if we are not currently booking to avoid UI jumps
+        if (status !== 'processing') {
+           const seatRes = await axios.get(`${API_URL}/api/shows/${id}/seats`);
+           setBookedSeats(seatRes.data);
+        }
+      } catch (err) { console.error(err); }
+      setLoading(false);
+    };
+
+    fetchShowDetails();
+    fetchSeats(); // Initial fetch
+
+    // POLLING: Fetch seats every 3 seconds (The Bonus Feature!)
+    const interval = setInterval(fetchSeats, 3000);
+
+    // Cleanup when leaving page
+    return () => clearInterval(interval);
+  }, [id, status]);
 
   const toggleSeat = (seatNum: number) => {
     if (bookedSeats.includes(seatNum)) return;
