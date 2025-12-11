@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
-import { ChevronLeft, Check, X, Loader2 } from 'lucide-react';
+import { ChevronLeft, Check, X, Loader2, Clock } from 'lucide-react';
 
 // USE YOUR DEPLOYED BACKEND URL HERE
-const API_URL = import.meta.env.VITE_API_URL || 'https://ticket-backend-j8o6.onrender.com';
+const API_URL = 'https://ticket-backend-j8o6.onrender.com';
 
 const BookingPage = () => {
   const { id } = useParams();
@@ -12,6 +12,9 @@ const BookingPage = () => {
   const [bookedSeats, setBookedSeats] = useState<number[]>([]);
   const [selectedSeats, setSelectedSeats] = useState<number[]>([]);
   
+  // TIMER STATE
+  const [timeLeft, setTimeLeft] = useState(120); // 120 seconds = 2 minutes
+
   // Status can be: 'idle', 'processing', 'success', 'conflict', 'error'
   const [status, setStatus] = useState('idle');
   const [loading, setLoading] = useState(true);
@@ -29,7 +32,6 @@ const BookingPage = () => {
 
     const fetchSeats = async () => {
       try {
-        // Only fetch seats if we are not currently booking to avoid UI jumps
         if (status !== 'processing') {
            const seatRes = await axios.get(`${API_URL}/api/shows/${id}/seats`);
            setBookedSeats(seatRes.data);
@@ -39,14 +41,44 @@ const BookingPage = () => {
     };
 
     fetchShowDetails();
-    fetchSeats(); // Initial fetch
+    fetchSeats(); 
 
-    // POLLING: Fetch seats every 3 seconds (The Bonus Feature!)
+    // POLLING: Fetch seats every 3 seconds
     const interval = setInterval(fetchSeats, 3000);
-
-    // Cleanup when leaving page
     return () => clearInterval(interval);
   }, [id, status]);
+
+  // --- TIMER LOGIC ---
+  useEffect(() => {
+    let timerId: any;
+
+    if (selectedSeats.length > 0 && timeLeft > 0) {
+      // If seats are selected, tick down
+      timerId = setInterval(() => {
+        setTimeLeft((prev) => prev - 1);
+      }, 1000);
+    } else if (selectedSeats.length === 0) {
+      // If no seats selected, reset timer
+      setTimeLeft(120);
+    }
+
+    // Handle Expiry
+    if (timeLeft === 0) {
+      alert("Session Expired! Please select your seats again.");
+      setSelectedSeats([]); // Clear selection
+      setTimeLeft(120); // Reset timer
+    }
+
+    return () => clearInterval(timerId);
+  }, [selectedSeats, timeLeft]);
+
+  // Helper to format seconds into MM:SS
+  const formatTime = (seconds: number) => {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${m}:${s < 10 ? '0' : ''}${s}`;
+  };
+  // -------------------
 
   const toggleSeat = (seatNum: number) => {
     if (bookedSeats.includes(seatNum)) return;
@@ -66,30 +98,24 @@ const BookingPage = () => {
         seat_numbers: selectedSeats
       });
       setStatus('success');
-      // Wait 2 seconds so user sees the success popup, then reload
       setTimeout(() => window.location.reload(), 2500);
     } catch (err: any) {
       if (err.response && err.response.status === 409) {
         setStatus('conflict');
-        // Refresh seats immediately behind the popup
         const seatRes = await axios.get(`${API_URL}/api/shows/${id}/seats`);
         setBookedSeats(seatRes.data);
-        setSelectedSeats([]); // Clear selection
+        setSelectedSeats([]);
       } else {
         setStatus('error');
       }
     }
   };
 
-  const closePopup = () => {
-    setStatus('idle');
-  };
+  const closePopup = () => setStatus('idle');
 
   return (
     <div className="container" style={{ maxWidth: '600px' }}>
-      {/* --- POPUPS START --- */}
-      
-      {/* 1. SUCCESS POPUP */}
+      {/* SUCCESS POPUP */}
       {status === 'success' && (
         <div className="modal-overlay">
           <div className="modal-content">
@@ -97,14 +123,12 @@ const BookingPage = () => {
               <Check size={40} strokeWidth={3} />
             </div>
             <h2 style={{ fontSize: '1.5rem', marginBottom: '10px' }}>Booking Confirmed!</h2>
-            <p style={{ color: 'var(--text-muted)' }}>
-              Your seats have been successfully reserved. Enjoy your trip!
-            </p>
+            <p style={{ color: 'var(--text-muted)' }}>Your seats have been reserved.</p>
           </div>
         </div>
       )}
 
-      {/* 2. CONFLICT POPUP (Double Booking) */}
+      {/* CONFLICT POPUP */}
       {status === 'conflict' && (
         <div className="modal-overlay">
           <div className="modal-content">
@@ -113,7 +137,7 @@ const BookingPage = () => {
             </div>
             <h2 style={{ fontSize: '1.5rem', marginBottom: '10px' }}>Too Late!</h2>
             <p style={{ color: 'var(--text-muted)', marginBottom: '20px' }}>
-              Someone just booked these seats while you were choosing. Please select different seats.
+              Someone just booked these seats.
             </p>
             <button className="btn btn-primary" onClick={closePopup} style={{ width: '100%' }}>
               Try Again
@@ -121,8 +145,6 @@ const BookingPage = () => {
           </div>
         </div>
       )}
-
-      {/* --- POPUPS END --- */}
 
       <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
         <Link to="/" style={{ color: 'var(--text-muted)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '5px' }}>
@@ -151,12 +173,8 @@ const BookingPage = () => {
       }}></div>
 
       <div style={{ 
-        display: 'grid', 
-        gridTemplateColumns: 'repeat(4, 1fr)', 
-        gap: '15px', 
-        justifyContent: 'center',
-        margin: '0 auto',
-        maxWidth: '300px'
+        display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '15px', 
+        justifyContent: 'center', margin: '0 auto', maxWidth: '300px'
       }}>
         {!loading && Array.from({ length: totalSeats }).map((_, i) => {
           const seatNum = i + 1;
@@ -184,7 +202,7 @@ const BookingPage = () => {
         })}
       </div>
 
-      {/* --- UPDATED FOOTER WITH TIMER & CLEAR BUTTON --- */}
+      {/* FOOTER WITH WORKING TIMER */}
       <div style={{ 
         position: 'fixed', bottom: 0, left: 0, right: 0, 
         background: 'white', borderTop: '1px solid #e2e8f0', padding: '20px',
@@ -200,16 +218,21 @@ const BookingPage = () => {
                 <div style={{ fontSize: '1.25rem', fontWeight: 'bold' }}>${selectedSeats.length * 25}</div>
             </div>
             
-            {/* NEW TIMER BADGE */}
+            {/* REAL TIMER BADGE */}
             {selectedSeats.length > 0 && (
-                <div style={{ background: '#fef2f2', color: '#ef4444', padding: '5px 12px', borderRadius: '20px', fontSize: '0.9rem', fontWeight: 'bold' }}>
-                   Time left: 2:00
+                <div style={{ 
+                  background: '#fef2f2', color: '#ef4444', 
+                  padding: '6px 14px', borderRadius: '20px', 
+                  fontSize: '0.9rem', fontWeight: 'bold',
+                  display: 'flex', alignItems: 'center', gap: '6px',
+                  border: '1px solid #fecaca'
+                }}>
+                   <Clock size={14} /> {formatTime(timeLeft)}
                 </div>
             )}
           </div>
 
           <div style={{ display: 'flex', gap: '10px' }}>
-             {/* NEW CLEAR BUTTON */}
              {selectedSeats.length > 0 && (
                 <button onClick={() => setSelectedSeats([])} className="btn" style={{ background: '#f1f5f9', color: '#64748b' }}>
                   Clear
