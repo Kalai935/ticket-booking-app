@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import { PlusCircle, Calendar, Users, Type, Trash2 } from 'lucide-react';
+import { PlusCircle, Calendar, Users, Type} from 'lucide-react';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
