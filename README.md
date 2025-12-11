@@ -55,8 +55,8 @@ Follow these steps to run the project locally.
 ```bash
 git clone https://github.com/Kalai935/ticket-booking-app.git
 cd ticket-booking-app
-
-2. Backend Setup
+```
+### 2. Backend Setup
 ```bash
 cd backend
 npm install
@@ -69,20 +69,20 @@ node init.js
 
 # Start Server
 node index.js
-
+```
 Server runs on: http://localhost:5000
 
-3. Frontend Setup
-
+### 3. Frontend Setup
+```bash
 cd ../frontend
 npm install
 
 # Start React Dev Server
 npm run dev
-
+```
 App runs on: http://localhost:5173
 
-💾 Database Schema
+### 💾 Database Schema
 The system uses a normalized relational schema to ensure data integrity.
 -- Shows Table
 CREATE TABLE shows (
@@ -108,7 +108,7 @@ CREATE TABLE booking_seats (
     UNIQUE(booking_id, seat_number) -- Prevents duplicate entries
 );
 
-📖 API Documentation
+### 📖 API Documentation
 
 1. Get All Shows
 Endpoint: GET /api/shows
@@ -126,14 +126,12 @@ Returns:
 201 Created: Booking successful.
 409 Conflict: "One or more seats are already booked" (Concurrency protection).
 
-✅ Assumptions & Limitations
+### ✅ Assumptions & Limitations
 Auth: User authentication is mocked (random User IDs are generated per session) as per assignment scope.
 
 Payment: The system assumes immediate confirmation upon booking (Payment Gateway integration is out of scope).
 
 Timezone: All times are handled in UTC/Server time.
 
-📞 Contact
-Developer: Kalai M
-GitHub: https://github.com/Kalai935
+
 
