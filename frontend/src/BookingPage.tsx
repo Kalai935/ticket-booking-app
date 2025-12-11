@@ -4,7 +4,7 @@ import axios from 'axios';
 import { ChevronLeft, Check, X, Loader2 } from 'lucide-react';
 
 // USE YOUR DEPLOYED BACKEND URL HERE
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const API_URL = import.meta.env.VITE_API_URL || 'https://ticket-backend-j8o6.onrender.com';
 const BookingPage = () => {
   const { id } = useParams();
   const [totalSeats, setTotalSeats] = useState(0);

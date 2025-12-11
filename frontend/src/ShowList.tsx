@@ -6,7 +6,7 @@ import { format } from 'date-fns';
 
 // USE YOUR DEPLOYED BACKEND URL HERE (OR localhost:5000 for dev)
 // If you deployed, use: 'https://your-backend-url.onrender.com'
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const API_URL = import.meta.env.VITE_API_URL || 'https://ticket-backend-j8o6.onrender.com';
 interface Show {
   id: number;
   name: string;
