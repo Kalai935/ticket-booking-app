@@ -5,6 +5,7 @@ import { ChevronLeft, Check, X, Loader2 } from 'lucide-react';
 
 // USE YOUR DEPLOYED BACKEND URL HERE
 const API_URL = import.meta.env.VITE_API_URL || 'https://ticket-backend-j8o6.onrender.com';
+
 const BookingPage = () => {
   const { id } = useParams();
   const [totalSeats, setTotalSeats] = useState(0);
@@ -183,6 +184,7 @@ const BookingPage = () => {
         })}
       </div>
 
+      {/* --- UPDATED FOOTER WITH TIMER & CLEAR BUTTON --- */}
       <div style={{ 
         position: 'fixed', bottom: 0, left: 0, right: 0, 
         background: 'white', borderTop: '1px solid #e2e8f0', padding: '20px',
@@ -191,22 +193,42 @@ const BookingPage = () => {
         zIndex: 500
       }}>
         <div className="container" style={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center', margin: 0 }}>
-          <div>
-            <div style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>Total Price</div>
-            <div style={{ fontSize: '1.25rem', fontWeight: 'bold' }}>${selectedSeats.length * 25}</div>
-          </div>
-          <button 
-            className="btn btn-primary" 
-            onClick={handleBooking}
-            disabled={selectedSeats.length === 0 || status === 'processing'}
-            style={{ padding: '12px 30px' }}
-          >
-            {status === 'processing' ? (
-              <> <Loader2 className="animate-spin" size={20} /> Booking... </>
-            ) : (
-              'Confirm Booking'
+          
+          <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
+            <div>
+                <div style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>Total Price</div>
+                <div style={{ fontSize: '1.25rem', fontWeight: 'bold' }}>${selectedSeats.length * 25}</div>
+            </div>
+            
+            {/* NEW TIMER BADGE */}
+            {selectedSeats.length > 0 && (
+                <div style={{ background: '#fef2f2', color: '#ef4444', padding: '5px 12px', borderRadius: '20px', fontSize: '0.9rem', fontWeight: 'bold' }}>
+                   Time left: 2:00
+                </div>
             )}
-          </button>
+          </div>
+
+          <div style={{ display: 'flex', gap: '10px' }}>
+             {/* NEW CLEAR BUTTON */}
+             {selectedSeats.length > 0 && (
+                <button onClick={() => setSelectedSeats([])} className="btn" style={{ background: '#f1f5f9', color: '#64748b' }}>
+                  Clear
+                </button>
+              )}
+              
+              <button 
+                className="btn btn-primary" 
+                onClick={handleBooking}
+                disabled={selectedSeats.length === 0 || status === 'processing'}
+                style={{ padding: '12px 30px' }}
+              >
+                {status === 'processing' ? (
+                  <> <Loader2 className="animate-spin" size={20} /> Booking... </>
+                ) : (
+                  'Confirm Booking'
+                )}
+              </button>
+          </div>
         </div>
       </div>
       
